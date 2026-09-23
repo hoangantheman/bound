@@ -10,7 +10,6 @@
 
 * {
     box-sizing: border-box;
-    margin: 0;
 }
 
 html,
@@ -202,15 +201,17 @@ body {
 
 
 #start-screen-content {
-
     justify-self: start;
     margin-left: clamp(24px, 8vw, 140px);
     text-align: left;
     transform: translateY(1.4rem);
+    animation: title-entry 1.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+    transition: opacity 700ms ease, transform 700ms ease;
+}
 
-    transition:
-        opacity 700ms ease,
-        transform 700ms ease;
+@keyframes title-entry {
+    from { opacity: 0; transform: translateX(-48px) translateY(1.4rem); }
+    to { opacity: 1; transform: translateX(0) translateY(1.4rem); }
 }
 
 
@@ -251,8 +252,8 @@ body {
 
 
 #start-screen.is-hidden #start-screen-content {
-
     opacity: 0;
+    animation: none;
     transform: translateY(-12px);
 }
 
@@ -688,7 +689,30 @@ body {
     background: black;
 }
 
+@media (max-width: 700px) {
 
+    #tutorial-card {
+        min-height: 82vh;
+    }
+
+    #tutorial-content {
+        padding: 30px;
+    }
+
+    #tutorial-content h2 {
+        font-size: clamp(2.8rem, 12vw, 5rem);
+    }
+
+    .tutorial-controls {
+        grid-template-columns: 1fr;
+    }
+
+    .tutorial-control {
+        min-height: auto;
+        padding: 18px;
+    }
+
+}
 
 /* -------------------------
    CONTROLS WINDOW
@@ -854,35 +878,6 @@ body {
 
     background: white;
     color: black;
-}
-
-/* -------------------------
-   MEDIA QUERIES - FOR DESKTOPS
-------------------------- */
-
-@media (max-width: 700px) {
-
-    #tutorial-card {
-        min-height: 82vh;
-    }
-
-    #tutorial-content {
-        padding: 30px;
-    }
-
-    #tutorial-content h2 {
-        font-size: clamp(2.8rem, 12vw, 5rem);
-    }
-
-    .tutorial-controls {
-        grid-template-columns: 1fr;
-    }
-
-    .tutorial-control {
-        min-height: auto;
-        padding: 18px;
-    }
-
 }
 
 
