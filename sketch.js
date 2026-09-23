@@ -6,6 +6,8 @@ let paintingHistory = [];
 let paintingFadeTarget = null;
 let paintingFadeStartTime = 0;
 let paintingFadeDuration = 520;
+let undoFadeLayer = null;
+let undoFadeStartTime = 0;
 let currentStroke = [];
 let trail = [];
 let trailLength = 25;
@@ -91,7 +93,6 @@ let gridSize = 60;
 let collisionDistance = 4;
 
 let pullStrength = 3;
-let pullRadius = 35;
 
 let pulledSegments = [];
 
@@ -205,8 +206,7 @@ void main() {
     uMid * 0.25 +
     uHigh * 0.10;
 
-  float lowMotion =
-    max(uBass, 0.35);
+  float lowMotion = max(uBass, 0.35);
 
   float highMotion =
     clamp(
@@ -296,8 +296,7 @@ void main() {
       radius
     );
 
-  vec2 displacement =
-    radial * outwardWave * (0.18 + highMotion * 0.82);
+  vec2 displacement = radial * outwardWave * (0.18 + highMotion * 0.82);
 
   vec2 evolutionDisplacement =
     tangent *
@@ -321,8 +320,7 @@ void main() {
     1.50 *
     uHandProximity;
 
-  displacement +=
-    evolutionDisplacement;
+  displacement += evolutionDisplacement;
 
   displacement +=
     tangent *
@@ -376,9 +374,7 @@ async function startAudio() {
     if (!audioFile) {
 
       audioFile =
-        new Audio(
-          "./audio/entanglement.mp3"
-        );
+        new Audio( "./audio/entanglement.mp3");
 
       audioFile.preload = "auto";
       audioFile.loop = true;
@@ -394,8 +390,7 @@ async function startAudio() {
         window.AudioContext ||
         window.webkitAudioContext;
 
-      audioContext =
-        new AudioContext();
+      audioContext = new AudioContext();
 
     }
 
@@ -411,25 +406,18 @@ async function startAudio() {
 
     if (!audioAnalyser) {
 
-      audioAnalyser =
-        audioContext.createAnalyser();
+      audioAnalyser = audioContext.createAnalyser();
 
-      audioAnalyser.fftSize =
-        1024;
+      audioAnalyser.fftSize = 1024;
 
-      audioAnalyser.minDecibels =
-        -90;
+      audioAnalyser.minDecibels = -90;
 
-      audioAnalyser.maxDecibels =
-        -10;
+      audioAnalyser.maxDecibels = -10;
 
-      audioAnalyser.smoothingTimeConstant =
-        0.65;
+      audioAnalyser.smoothingTimeConstant = 0.65;
 
       audioData =
-        new Uint8Array(
-          audioAnalyser.frequencyBinCount
-        );
+        new Uint8Array( audioAnalyser.frequencyBinCount);
 
     }
 
@@ -437,17 +425,11 @@ async function startAudio() {
     if (!audioSource) {
 
       audioSource =
-        audioContext.createMediaElementSource(
-          audioFile
-        );
+        audioContext.createMediaElementSource( audioFile);
 
-      audioSource.connect(
-        audioAnalyser
-      );
+      audioSource.connect( audioAnalyser);
 
-      audioAnalyser.connect(
-        audioContext.destination
-      );
+      audioAnalyser.connect( audioContext.destination);
 
     }
 
@@ -490,8 +472,7 @@ function getAudioBand(
   }
 
 
-  let nyquist =
-    audioContext.sampleRate / 2;
+  let nyquist = audioContext.sampleRate / 2;
 
 
   let low =
@@ -543,8 +524,7 @@ function getAudioBand(
     i++
   ) {
 
-    total +=
-      audioData[i];
+    total += audioData[i];
 
   }
 
@@ -575,9 +555,7 @@ function updateAudio() {
   }
 
 
-  audioAnalyser.getByteFrequencyData(
-    audioData
-  );
+  audioAnalyser.getByteFrequencyData( audioData);
 
 
   let bass =
@@ -707,9 +685,7 @@ function updateAudio() {
     0.01
   ) {
 
-    audioWaveRadii.push(
-      0
-    );
+    audioWaveRadii.push( 0);
 
     audioWaveStrengths.push(
       constrain(
@@ -755,14 +731,12 @@ function updateAudio() {
       );
 
 
-    audioWaveStrengths[waveIndex] *=
-      0.996;
+    audioWaveStrengths[waveIndex] *= 0.996;
 
   }
 
 
-  previousAudioPulse =
-    audioPulse;
+  previousAudioPulse = audioPulse;
 
 
   audioTime +=
@@ -831,19 +805,16 @@ let screenStrength =
   push();
 
 
-  let ctx =
-    drawingContext;
+  let ctx = drawingContext;
 
 
   ctx.save();
 
 
-  ctx.globalCompositeOperation =
-    "screen";
+  ctx.globalCompositeOperation = "screen";
 
 
-  ctx.globalAlpha =
-    screenStrength;
+  ctx.globalAlpha = screenStrength;
 
 
   drawAudioDisplacement();
@@ -871,9 +842,7 @@ function drawAudioDisplacement() {
 
   displacementLayer.clear();
 
-  displacementLayer.shader(
-    displacementShader
-  );
+  displacementLayer.shader( displacementShader);
 
   displacementShader.setUniform(
     "uTexture",
@@ -995,13 +964,9 @@ function drawTrail() {
 
   noFill();
 
-  stroke(
-    selectedColor
-  );
+  stroke( selectedColor);
 
-  strokeWeight(
-    1
-  );
+  strokeWeight( 1);
 
 
   beginShape();
@@ -1032,8 +997,7 @@ function drawTrail() {
 
 async function setup() {
 
-  p5.disableFriendlyErrors =
-    true;
+  p5.disableFriendlyErrors = true;
 
 
   createCanvas(
@@ -1042,9 +1006,7 @@ async function setup() {
   );
 
 
-  pixelDensity(
-    1
-  );
+  pixelDensity( 1);
 
 
   colorMode(
@@ -1069,9 +1031,7 @@ async function setup() {
     );
 
 
-  painting.pixelDensity(
-    1
-  );
+  painting.pixelDensity( 1);
 
 
   painting.colorMode(
@@ -1134,8 +1094,7 @@ async function setup() {
   ];
 
 
-  selectedColor =
-    colors[0];
+  selectedColor = colors[0];
 
 
   startAudio();
@@ -1154,11 +1113,9 @@ async function startExperience() {
   }
 
 
-  experienceStarted =
-    true;
+  experienceStarted = true;
 
-  titleAnimationStarted =
-    false;
+  titleAnimationStarted = false;
 
   threadStrokes = [];
   activeThread = null;
@@ -1183,9 +1140,7 @@ async function startExperience() {
   );
 
 
-  video.parent(
-    "camera-content"
-  );
+  video.parent( "camera-content");
 
 
   ml5.handPose(
@@ -1195,8 +1150,7 @@ async function startExperience() {
   ).then(
     function(model) {
 
-      handPose =
-        model;
+      handPose = model;
 
 
       handPose.detectStart(
@@ -1221,8 +1175,7 @@ function setHandedness(handedness) {
 
   }
 
-  userHandedness =
-    handedness;
+  userHandedness = handedness;
 
   // Reset pinch states when changing control sides.
   isDrawing = false;
@@ -1239,8 +1192,7 @@ function gotHands(
   results
 ) {
 
-  hands =
-    results;
+  hands = results;
 
 }
 
@@ -1255,14 +1207,11 @@ function drawTitleAnimation() {
     !titleAnimationStarted
   ) {
 
-    titleAnimationStarted =
-      true;
+    titleAnimationStarted = true;
 
-    titleAnimationStartTime =
-      millis();
+    titleAnimationStartTime = millis();
 
-    titleAnimationCycle =
-      -1;
+    titleAnimationCycle = -1;
 
     threadStrokes = [];
     activeThread = null;
@@ -1276,14 +1225,11 @@ function drawTitleAnimation() {
   }
 
 
-  let elapsedTime =
-    millis() - titleAnimationStartTime;
+  let elapsedTime = millis() - titleAnimationStartTime;
 
-  let cycleTime =
-    elapsedTime % TITLE_CYCLE_TIME;
+  let cycleTime = elapsedTime % TITLE_CYCLE_TIME;
 
-  let currentCycle =
-    floor(elapsedTime / TITLE_CYCLE_TIME);
+  let currentCycle = floor(elapsedTime / TITLE_CYCLE_TIME);
 
 
   if (
@@ -1302,8 +1248,7 @@ function drawTitleAnimation() {
   }
 
 
-  titleAnimationCycle =
-    currentCycle;
+  titleAnimationCycle = currentCycle;
 
   updateThreadStrokes();
 
@@ -1322,14 +1267,11 @@ function drawTitleAnimation() {
       );
 
     painting.push();
-    let paintingContext =
-      painting.drawingContext;
+    let paintingContext = painting.drawingContext;
 
     paintingContext.save();
-    paintingContext.globalCompositeOperation =
-      "destination-out";
-    paintingContext.fillStyle =
-      "rgba(0, 0, 0, " + fadeAmount + ")";
+    paintingContext.globalCompositeOperation = "destination-out";
+    paintingContext.fillStyle = "rgba(0, 0, 0, " + fadeAmount + ")";
     paintingContext.fillRect(
       0,
       0,
@@ -1348,17 +1290,16 @@ function drawTitleAnimation() {
     0
   );
 
+  drawUndoStrokeFade();
 
 }
 
 
 function seedTitleThreads() {
 
-  let centerX =
-    width * 0.74;
+  let centerX = width * 0.74;
 
-  let centerY =
-    height * 0.5;
+  let centerY = height * 0.5;
 
 
   for (
@@ -1367,11 +1308,9 @@ function seedTitleThreads() {
     i++
   ) {
 
-    let angle =
-      random(TWO_PI);
+    let angle = random(TWO_PI);
 
-    let radius =
-      random(50, min(width, height) * 0.14);
+    let radius = random(50, min(width, height) * 0.14);
 
     let stroke = {
       curve: [],
@@ -1399,11 +1338,9 @@ function seedTitleThreads() {
         radius +
         pointIndex * 3.2;
 
-      let x =
-        centerX + cos(pointAngle) * pointRadius;
+      let x = centerX + cos(pointAngle) * pointRadius;
 
-      let y =
-        centerY + sin(pointAngle) * pointRadius;
+      let y = centerY + sin(pointAngle) * pointRadius;
 
       stroke.curve.push({
         x: x,
@@ -1418,9 +1355,7 @@ function seedTitleThreads() {
     }
 
 
-    threadStrokes.push(
-      stroke
-    );
+    threadStrokes.push( stroke);
 
   }
 
@@ -1431,9 +1366,7 @@ function draw() {
   updateAudio();
 
 
-  background(
-    0
-  );
+  background( 0);
 
 
   if (
@@ -1445,11 +1378,9 @@ function draw() {
   }
 
 
-  let rightHand =
-    null;
+  let rightHand = null;
 
-  let leftHand =
-    null;
+  let leftHand = null;
 
 
   for (
@@ -1461,8 +1392,7 @@ function draw() {
       "Right"
     ) {
 
-      rightHand =
-        hand;
+      rightHand = hand;
 
     }
 
@@ -1472,8 +1402,7 @@ function draw() {
       "Left"
     ) {
 
-      leftHand =
-        hand;
+      leftHand = hand;
 
     }
 
@@ -1503,9 +1432,7 @@ function draw() {
     colourHand
   ) {
 
-    selectColour(
-      colourHand
-    );
+    selectColour( colourHand);
 
   }
 
@@ -1539,9 +1466,7 @@ function draw() {
     drawingHand
   ) {
 
-    handleDrawingHand(
-      drawingHand
-    );
+    handleDrawingHand( drawingHand);
 
   }
 
@@ -1556,17 +1481,13 @@ function draw() {
     }
 
 
-    isDrawing =
-      false;
+    isDrawing = false;
 
-    wasDrawing =
-      false;
+    wasDrawing = false;
 
-    drawingWasUndoPinching =
-      false;
+    drawingWasUndoPinching = false;
 
-    drawingWasClearPinching =
-      false;
+    drawingWasClearPinching = false;
 
   }
 
@@ -1606,9 +1527,7 @@ function draw() {
     drawingHand
   ) {
 
-    drawCursor(
-      drawingHand
-    );
+    drawCursor( drawingHand);
 
   }
 
@@ -1623,12 +1542,10 @@ function selectColour(
   hand
 ) {
 
-  let index =
-    hand.index_finger_tip;
+  let index = hand.index_finger_tip;
 
 
-  let thumb =
-    hand.thumb_tip;
+  let thumb = hand.thumb_tip;
 
 
   let handCenterX =
@@ -1646,11 +1563,9 @@ function selectColour(
     0.5;
 
 
-  let wrist =
-    hand.wrist;
+  let wrist = hand.wrist;
 
-  let middleMcp =
-    hand.middle_finger_mcp;
+  let middleMcp = hand.middle_finger_mcp;
 
 
   if (
@@ -1716,11 +1631,9 @@ function selectColour(
     hand.pinky_finger_tip
   ];
 
-  let closestFinger =
-    -1;
+  let closestFinger = -1;
 
-  let closestDistance =
-    Infinity;
+  let closestDistance = Infinity;
 
   for (
     let i = 0;
@@ -1728,8 +1641,7 @@ function selectColour(
     i++
   ) {
 
-    let fingerTip =
-      fingerTips[i];
+    let fingerTip = fingerTips[i];
 
     if (!fingerTip) {
       continue;
@@ -1748,11 +1660,9 @@ function selectColour(
       closestDistance
     ) {
 
-      closestDistance =
-        distance;
+      closestDistance = distance;
 
-      closestFinger =
-        i;
+      closestFinger = i;
 
     }
 
@@ -1765,15 +1675,12 @@ function selectColour(
   ) {
 
 
-    selectedColor =
-      colors[closestFinger];
+    selectedColor = colors[closestFinger];
 
-    selectedColorIndex =
-      closestFinger;
+    selectedColorIndex = closestFinger;
 
 
-    leftWasPinching =
-      true;
+    leftWasPinching = true;
 
   }
 
@@ -1783,8 +1690,7 @@ function selectColour(
     closestDistance > 35
   ) {
 
-    leftWasPinching =
-      false;
+    leftWasPinching = false;
 
   }
 
@@ -1799,15 +1705,12 @@ function handleDrawingHand(
   hand
 ) {
 
-  let index =
-    hand.index_finger_tip;
+  let index = hand.index_finger_tip;
 
 
-  let thumb =
-    hand.thumb_tip;
+  let thumb = hand.thumb_tip;
 
-  let middle =
-    hand.middle_finger_tip;
+  let middle = hand.middle_finger_tip;
 
 
   let cameraX =
@@ -1876,8 +1779,7 @@ function handleDrawingHand(
         )
       : Infinity;
 
-  let pinky =
-    hand.pinky_finger_tip;
+  let pinky = hand.pinky_finger_tip;
 
   let pinkyPinchDistance =
     pinky
@@ -1944,8 +1846,7 @@ function handleDrawingHand(
       pinchStartTime === 0
     ) {
 
-      pinchStartTime =
-        millis();
+      pinchStartTime = millis();
 
     }
 
@@ -1956,14 +1857,11 @@ function handleDrawingHand(
       pinchHoldTime
     ) {
 
-      isDrawing =
-        true;
+      isDrawing = true;
 
-      lastPinchTime =
-        millis();
+      lastPinchTime = millis();
 
-      pinchStartTime =
-        0;
+      pinchStartTime = 0;
 
     }
 
@@ -1973,8 +1871,7 @@ function handleDrawingHand(
     !isDrawing
   ) {
 
-    pinchStartTime =
-      0;
+    pinchStartTime = 0;
 
   }
 
@@ -1984,8 +1881,7 @@ function handleDrawingHand(
     pinchDistance < 32
   ) {
 
-    lastPinchTime =
-      millis();
+    lastPinchTime = millis();
 
   }
 
@@ -2005,8 +1901,7 @@ function handleDrawingHand(
       pinchGraceTime
     ) {
 
-      isDrawing =
-        false;
+      isDrawing = false;
 
     }
 
@@ -2051,8 +1946,7 @@ function handleDrawingHand(
   }
 
 
-  wasDrawing =
-    isDrawing;
+  wasDrawing = isDrawing;
 
 }
 
@@ -2063,8 +1957,7 @@ function handleDrawingHand(
 
 function startStroke() {
 
-  currentStroke =
-    [];
+  currentStroke = [];
 
 
   let stroke = {
@@ -2086,13 +1979,10 @@ function startStroke() {
   };
 
 
-  threadStrokes.push(
-    stroke
-  );
+  threadStrokes.push( stroke);
 
 
-  activeThread =
-    stroke;
+  activeThread = stroke;
 
 
   activeThread.curve.push({
@@ -2152,8 +2042,7 @@ function addPoint(
   }
 
 
-  let curve =
-    activeThread.curve;
+  let curve = activeThread.curve;
 
 
   if (
@@ -2201,8 +2090,7 @@ function addPoint(
     steps < 1
   ) {
 
-    steps =
-      1;
+    steps = 1;
 
   }
 
@@ -2317,16 +2205,14 @@ function addPoint(
 function updateThreadStrokes() {
 
   for (
-    let s =
-      threadStrokes.length - 1;
+    let s = threadStrokes.length - 1;
 
     s >= 0;
 
     s--
   ) {
 
-    let stroke =
-      threadStrokes[s];
+    let stroke = threadStrokes[s];
 
 
     if (
@@ -2347,14 +2233,10 @@ function updateThreadStrokes() {
       step++
     ) {
 
-      stepThread(
-        stroke
-      );
+      stepThread( stroke);
 
 
-      drawThread(
-        stroke
-      );
+      drawThread( stroke);
 
     }
 
@@ -2372,8 +2254,7 @@ function stepThread(
   stroke
 ) {
 
-  let curve =
-    stroke.curve;
+  let curve = stroke.curve;
 
 
   if (
@@ -2416,15 +2297,12 @@ function stepThread(
     i++
   ) {
 
-    let p =
-      curve[i];
+    let p = curve[i];
 
 
-    let accX =
-      0;
+    let accX = 0;
 
-    let accY =
-      0;
+    let accY = 0;
 
 
     let symmetryAxisAngle =
@@ -2462,22 +2340,17 @@ function stepThread(
       noiseValue;
 
 
-    noiseAngle +=
-      symmetryAxisAngle;
+    noiseAngle += symmetryAxisAngle;
 
 
     accX +=
       THREAD_NOISE_FORCE *
-      cos(
-        noiseAngle
-      );
+      cos( noiseAngle);
 
 
     accY +=
       THREAD_NOISE_FORCE *
-      sin(
-        noiseAngle
-      );
+      sin( noiseAngle);
 
 
     accX +=
@@ -2490,20 +2363,16 @@ function stepThread(
       p.inputVy;
 
 
-    p.inputVx *=
-      THREAD_VELOCITY_DECAY;
+    p.inputVx *= THREAD_VELOCITY_DECAY;
 
 
-    p.inputVy *=
-      THREAD_VELOCITY_DECAY;
+    p.inputVy *= THREAD_VELOCITY_DECAY;
 
 
-    let oldX =
-      p.x;
+    let oldX = p.x;
 
 
-    let oldY =
-      p.y;
+    let oldY = p.y;
 
 
     p.x +=
@@ -2524,12 +2393,10 @@ function stepThread(
       accY;
 
 
-    p.px =
-      oldX;
+    p.px = oldX;
 
 
-    p.py =
-      oldY;
+    p.py = oldY;
 
 
     if (
@@ -2551,12 +2418,10 @@ function stepThread(
     i++
   ) {
 
-    let p =
-      curve[i];
+    let p = curve[i];
 
 
-    let p2 =
-      curve[i - 1];
+    let p2 = curve[i - 1];
 
 
     let dx =
@@ -2601,20 +2466,16 @@ function stepThread(
         dy;
 
 
-      p.x -=
-        fx;
+      p.x -= fx;
 
 
-      p2.x +=
-        fx;
+      p2.x += fx;
 
 
-      p.y -=
-        fy;
+      p.y -= fy;
 
 
-      p2.y +=
-        fy;
+      p2.y += fy;
 
     }
 
@@ -2631,8 +2492,7 @@ function drawThread(
   stroke
 ) {
 
-  let curve =
-    stroke.curve;
+  let curve = stroke.curve;
 
 
   if (
@@ -2714,43 +2574,31 @@ function drawThread(
   painting.noFill();
 
 
-  painting.stroke(
-    drawColor
-  );
+  painting.stroke( drawColor);
 
 
-  painting.strokeWeight(
-    THREAD_LINE_WIDTH
-  );
+  painting.strokeWeight( THREAD_LINE_WIDTH);
 
 
-  painting.strokeCap(
-    ROUND
-  );
+  painting.strokeCap( ROUND);
 
 
-  painting.strokeJoin(
-    ROUND
-  );
+  painting.strokeJoin( ROUND);
 
 
-  let ctx =
-    painting.drawingContext;
+  let ctx = painting.drawingContext;
 
 
   ctx.save();
 
 
-  ctx.globalCompositeOperation =
-    "lighter";
+  ctx.globalCompositeOperation = "lighter";
 
 
-  ctx.globalAlpha =
-    baseAlpha;
+  ctx.globalAlpha = baseAlpha;
 
 
-  let drawSymmetry =
-    stroke.symmetry || symmetry;
+  let drawSymmetry = stroke.symmetry || symmetry;
 
   let drawMirror =
     stroke.symmetryMirror === undefined
@@ -2859,8 +2707,7 @@ function drawThreadCurve(
     );
 
 
-  let ctx =
-    painting.drawingContext;
+  let ctx = painting.drawingContext;
 
 
   ctx.beginPath();
@@ -2872,8 +2719,7 @@ function drawThreadCurve(
   );
 
 
-  let previous =
-    second;
+  let previous = second;
 
 
   for (
@@ -2927,8 +2773,7 @@ function drawThreadCurve(
     );
 
 
-    previous =
-      current;
+    previous = current;
 
   }
 
@@ -2980,8 +2825,7 @@ function transformThreadPoint(
     mirror
   ) {
 
-    rotatedX =
-      -rotatedX;
+    rotatedX = -rotatedX;
 
   }
 
@@ -3007,38 +2851,31 @@ function transformThreadPoint(
 
 function finishStroke() {
 
-  let completedStroke =
-    activeThread;
+  let completedStroke = activeThread;
 
   if (
     activeThread
   ) {
 
-    activeThread.completed =
-      true;
+    activeThread.completed = true;
 
   }
 
 
-  activeThread =
-    null;
+  activeThread = null;
 
 
-  currentStroke =
-    [];
+  currentStroke = [];
 
 
-  trail =
-    [];
+  trail = [];
 
 
   if (
     completedStroke
   ) {
 
-    paintingHistory.push(
-      painting.get()
-    );
+    paintingHistory.push( painting.get());
 
   }
 
@@ -3056,8 +2893,7 @@ function undoLatestStroke() {
   }
 
 
-  let strokeIndex =
-    threadStrokes.length - 1;
+  let strokeIndex = threadStrokes.length - 1;
 
 
   while (
@@ -3079,8 +2915,14 @@ function undoLatestStroke() {
   }
 
 
-  let strokeToUndo =
-    threadStrokes[strokeIndex];
+  let strokeToUndo = threadStrokes[strokeIndex];
+
+  let currentPainting = painting.get();
+
+  let previousPainting =
+    paintingHistory[
+      paintingHistory.length - 2
+    ];
 
 
   threadStrokes.splice(
@@ -3101,9 +2943,7 @@ function undoLatestStroke() {
     let segment of segmentsToUndo
   ) {
 
-    removeFromGrid(
-      segment
-    );
+    removeFromGrid( segment);
 
   }
 
@@ -3133,16 +2973,20 @@ function undoLatestStroke() {
     painting.clear();
 
     painting.image(
-      paintingHistory[
-        paintingHistory.length - 1
-      ],
+      previousPainting,
       0,
       0
+    );
+
+    beginUndoStrokeFade(
+      currentPainting,
+      previousPainting
     );
 
   }
 
 }
+
 
 // ==================================================
 // COLLISION SEGMENT
@@ -3235,14 +3079,10 @@ function saveCollisionSegment(
     };
 
 
-    savedSegments.push(
-      segment
-    );
+    savedSegments.push( segment);
 
 
-    addToGrid(
-      segment
-    );
+    addToGrid( segment);
 
   }
 
@@ -3399,9 +3239,7 @@ function addToGrid(
 
       grid.get(
         key
-      ).push(
-        segment
-      );
+      ).push( segment);
 
     }
 
@@ -3487,8 +3325,7 @@ function checkCollision(
     );
 
 
-  let checked =
-    new Set();
+  let checked = new Set();
 
 
   for (
@@ -3514,9 +3351,7 @@ function checkCollision(
 
 
       let cell =
-        grid.get(
-          key
-        );
+        grid.get( key);
 
 
       if (
@@ -3543,9 +3378,7 @@ function checkCollision(
         }
 
 
-        checked.add(
-          segment
-        );
+        checked.add( segment);
 
 
         let distance =
@@ -4031,8 +3864,7 @@ function drawPulledSegments() {
   }
 
 
-  let now =
-    millis();
+  let now = millis();
 
 
   push();
@@ -4041,22 +3873,18 @@ function drawPulledSegments() {
   noFill();
 
 
-  strokeCap(
-    ROUND
-  );
+  strokeCap( ROUND);
 
 
   for (
-    let i =
-      pulledSegments.length - 1;
+    let i = pulledSegments.length - 1;
 
     i >= 0;
 
     i--
   ) {
 
-    let pull =
-      pulledSegments[i];
+    let pull = pulledSegments[i];
 
 
     let age =
@@ -4090,18 +3918,13 @@ function drawPulledSegments() {
       life;
 
 
-    let segment =
-      pull.segment;
+    let segment = pull.segment;
 
 
-    stroke(
-      segment.color
-    );
+    stroke( segment.color);
 
 
-    strokeWeight(
-      segment.weight
-    );
+    strokeWeight( segment.weight);
 
 
     let moveX =
@@ -4148,12 +3971,10 @@ function rotatePoint(
   angle
 ) {
 
-  let centerX =
-    width / 2;
+  let centerX = width / 2;
 
 
-  let centerY =
-    height / 2;
+  let centerY = height / 2;
 
 
   let dx =
@@ -4191,20 +4012,16 @@ function drawCursor(
   hand
 ) {
 
-  let x =
-    smoothX;
+  let x = smoothX;
 
 
-  let y =
-    smoothY;
+  let y = smoothY;
 
 
-  let index =
-    hand.index_finger_tip;
+  let index = hand.index_finger_tip;
 
 
-  let thumb =
-    hand.thumb_tip;
+  let thumb = hand.thumb_tip;
 
 
   let dx =
@@ -4228,8 +4045,7 @@ function drawCursor(
     pinchDistance < 23
   ) {
 
-    smoothCursorSize =
-      0;
+    smoothCursorSize = 0;
 
     return;
 
@@ -4269,8 +4085,7 @@ function drawCursor(
 
   noFill();
 
-  drawingContext.shadowBlur =
-    20;
+  drawingContext.shadowBlur = 20;
 
   drawingContext.shadowColor =
     color(
@@ -4281,14 +4096,10 @@ function drawCursor(
     );
 
 
-  stroke(
-    selectedColor
-  );
+  stroke( selectedColor);
 
 
-  strokeWeight(
-    1.5
-  );
+  strokeWeight( 1.5);
 
 
   circle(
@@ -4300,8 +4111,7 @@ function drawCursor(
 
   );
 
-  drawingContext.shadowBlur =
-    0;
+  drawingContext.shadowBlur = 0;
 
 
   pop();
@@ -4379,11 +4189,115 @@ function beginPaintingFade(
 
   }
 
-  paintingFadeTarget =
-    target;
+  paintingFadeTarget = target;
 
-  paintingFadeStartTime =
-    millis();
+  paintingFadeStartTime = millis();
+
+}
+
+
+function beginUndoStrokeFade(
+  currentPainting,
+  previousPainting
+) {
+
+  undoFadeLayer =
+    createGraphics(
+      width,
+      height
+    );
+
+  undoFadeLayer.pixelDensity(1);
+  undoFadeLayer.clear();
+
+  currentPainting.loadPixels();
+  previousPainting.loadPixels();
+  undoFadeLayer.loadPixels();
+
+  for (
+    let pixelIndex = 0;
+    pixelIndex < undoFadeLayer.pixels.length;
+    pixelIndex += 4
+  ) {
+
+    let changed =
+      abs(
+        currentPainting.pixels[pixelIndex] -
+        previousPainting.pixels[pixelIndex]
+      ) > 2 ||
+      abs(
+        currentPainting.pixels[pixelIndex + 1] -
+        previousPainting.pixels[pixelIndex + 1]
+      ) > 2 ||
+      abs(
+        currentPainting.pixels[pixelIndex + 2] -
+        previousPainting.pixels[pixelIndex + 2]
+      ) > 2 ||
+      abs(
+        currentPainting.pixels[pixelIndex + 3] -
+        previousPainting.pixels[pixelIndex + 3]
+      ) > 2;
+
+
+    if (
+      changed
+    ) {
+
+      undoFadeLayer.pixels[pixelIndex] = currentPainting.pixels[pixelIndex];
+      undoFadeLayer.pixels[pixelIndex + 1] = currentPainting.pixels[pixelIndex + 1];
+      undoFadeLayer.pixels[pixelIndex + 2] = currentPainting.pixels[pixelIndex + 2];
+      undoFadeLayer.pixels[pixelIndex + 3] = currentPainting.pixels[pixelIndex + 3];
+
+    }
+
+  }
+
+  undoFadeLayer.updatePixels();
+  undoFadeStartTime = millis();
+
+}
+
+
+function drawUndoStrokeFade() {
+
+  if (
+    !undoFadeLayer ||
+    undoFadeStartTime === 0
+  ) {
+
+    return;
+
+  }
+
+  let elapsedTime = millis() - undoFadeStartTime;
+
+  let opacity =
+    1 -
+    constrain(
+      elapsedTime /
+      paintingFadeDuration,
+      0,
+      1
+    );
+
+  push();
+  tint(255, opacity * 255);
+  image(
+    undoFadeLayer,
+    0,
+    0
+  );
+  pop();
+
+
+  if (
+    opacity <= 0
+  ) {
+
+    undoFadeLayer = null;
+    undoFadeStartTime = 0;
+
+  }
 
 }
 
@@ -4398,8 +4312,7 @@ function updatePaintingFade() {
 
   }
 
-  let elapsedTime =
-    millis() - paintingFadeStartTime;
+  let elapsedTime = millis() - paintingFadeStartTime;
 
   let fadeAmount =
     constrain(
@@ -4409,12 +4322,10 @@ function updatePaintingFade() {
       1
     );
 
-  let paintingContext =
-    painting.drawingContext;
+  let paintingContext = painting.drawingContext;
 
   paintingContext.save();
-  paintingContext.globalCompositeOperation =
-    "destination-out";
+  paintingContext.globalCompositeOperation = "destination-out";
   paintingContext.fillStyle =
     "rgba(0, 0, 0, " +
     min(0.16, 0.16 * (1 + fadeAmount)) +
@@ -4446,11 +4357,9 @@ function updatePaintingFade() {
 
     }
 
-    paintingFadeTarget =
-      null;
+    paintingFadeTarget = null;
 
-    paintingFadeStartTime =
-      0;
+    paintingFadeStartTime = 0;
 
   }
 
@@ -4463,8 +4372,7 @@ function updatePaintingFade() {
 
 function windowResized() {
 
-  let oldPainting =
-    painting;
+  let oldPainting = painting;
 
 
   resizeCanvas(
@@ -4484,9 +4392,7 @@ function windowResized() {
     );
 
 
-  painting.pixelDensity(
-    1
-  );
+  painting.pixelDensity( 1);
 
 
   painting.colorMode(
@@ -4610,9 +4516,7 @@ function removeFromGrid(
         y;
 
       let cell =
-        grid.get(
-          key
-        );
+        grid.get( key);
 
       if (!cell) {
         continue;
