@@ -1,6 +1,10 @@
 let video;
 let handPose;
 let hands = [];
+let stableRightHand = null;
+let stableLeftHand = null;
+let stableRightWrist = null;
+let stableLeftWrist = null;
 let painting;
 let paintingHistory = [];
 let paintingFadeTarget = null;
@@ -1188,12 +1192,90 @@ function setHandedness(handedness) {
 }
 
 
-function gotHands(
-  results
-) {
+function gotHands(results) {
+  hands = stabilizeHands(results);
+}
 
-  hands = results;
+function wristOf(hand) {
+  return hand && hand.wrist ? { x: hand.wrist.x, y: hand.wrist.y } : null;
+}
 
+function wristDistance(a, b) {
+  if (!a || !b) return Infinity;
+  return dist(a.x, a.y, b.x, b.y);
+}
+
+function stabilizeHands(results) {
+  if (!results || results.length === 0) {
+    stableRightHand = null;
+    stableLeftHand = null;
+    stableRightWrist = null;
+    stableLeftWrist = null;
+    return [];
+  }
+
+  if (results.length === 1) {
+    const hand = results[0];
+    const label = hand.handedness;
+    const wrist = wristOf(hand);
+
+    if (label === "Right") {
+      stableRightHand = hand;
+      stableRightWrist = wrist;
+      stableLeftHand = null;
+      stableLeftWrist = null;
+    } else if (label === "Left") {
+      stableLeftHand = hand;
+      stableLeftWrist = wrist;
+      stableRightHand = null;
+      stableRightWrist = null;
+    }
+
+    return [stableRightHand, stableLeftHand].filter(Boolean);
+  }
+
+  // Keep each physical hand attached to its previous position. This prevents
+  // the result order (or a temporary handedness label change) from swapping
+  // the drawing and colour controls when the second hand enters the camera.
+  const remaining = results.slice();
+  const assignments = { right: null, left: null };
+
+  if (stableRightWrist) {
+    let best = 0, bestDistance = Infinity;
+    for (let i = 0; i < remaining.length; i++) {
+      const d = wristDistance(stableRightWrist, wristOf(remaining[i]));
+      const labelPenalty = remaining[i].handedness === "Right" ? 0 : 120;
+      if (d + labelPenalty < bestDistance) { best = i; bestDistance = d + labelPenalty; }
+    }
+    assignments.right = remaining.splice(best, 1)[0];
+  }
+
+  if (stableLeftWrist && remaining.length) {
+    let best = 0, bestDistance = Infinity;
+    for (let i = 0; i < remaining.length; i++) {
+      const d = wristDistance(stableLeftWrist, wristOf(remaining[i]));
+      const labelPenalty = remaining[i].handedness === "Left" ? 0 : 120;
+      if (d + labelPenalty < bestDistance) { best = i; bestDistance = d + labelPenalty; }
+    }
+    assignments.left = remaining.splice(best, 1)[0];
+  }
+
+  // Fill any empty slot from the remaining model result, preferring its label.
+  for (const hand of remaining) {
+    if (!assignments.right && hand.handedness === "Right") assignments.right = hand;
+    else if (!assignments.left && hand.handedness === "Left") assignments.left = hand;
+  }
+  for (const hand of remaining) {
+    if (!assignments.right) assignments.right = hand;
+    else if (!assignments.left && hand !== assignments.right) assignments.left = hand;
+  }
+
+  stableRightHand = assignments.right;
+  stableLeftHand = assignments.left;
+  stableRightWrist = wristOf(stableRightHand);
+  stableLeftWrist = wristOf(stableLeftHand);
+
+  return [stableRightHand, stableLeftHand].filter(Boolean);
 }
 
 
