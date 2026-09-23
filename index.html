@@ -63,17 +63,51 @@
 
         </div>
 
-        <div id="volume-control">
-            <label for="music-volume">MUSIC</label>
-            <input
-                id="music-volume"
-                type="range"
-                min="0"
-                max="1"
-                step="0.01"
-                value="0.2"
-                aria-label="Music volume"
-            >
+        <div id="settings-window" class="collapsed">
+
+            <div id="settings-header">
+                <span>SETTINGS</span>
+                <button id="settings-collapse-button">+</button>
+            </div>
+
+            <div id="settings-content">
+
+                <div class="settings-group">
+                    <span class="settings-label">SYMMETRY</span>
+                    <div class="settings-options">
+                        <button type="button" data-symmetry="2">2 WAY</button>
+                        <button type="button" data-symmetry="4">4 WAY</button>
+                        <button type="button" data-symmetry="6">6 WAY</button>
+                        <button type="button" data-symmetry="8" class="is-selected">8 WAY</button>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <span class="settings-label">INTENSITY</span>
+                    <div class="settings-options settings-intensity-options">
+                        <button type="button" data-intensity="low">LOW</button>
+                        <button type="button" data-intensity="medium" class="is-selected">MEDIUM</button>
+                        <button type="button" data-intensity="high">HIGH</button>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <span class="settings-label">MUSIC</span>
+                    <div class="settings-volume">
+                        <input
+                            id="music-volume"
+                            type="range"
+                            min="0"
+                            max="1"
+                            step="0.01"
+                            value="0.2"
+                            aria-label="Music volume"
+                        >
+                    </div>
+                </div>
+
+            </div>
+
         </div>
 
         <div id="controls-window" class="collapsed">
