@@ -6,6 +6,10 @@ let controlsWindow;
 let controlsHeader;
 let controlsCollapseButton;
 
+let settingsWindow;
+let settingsHeader;
+let settingsCollapseButton;
+
 let draggingWindow = null;
 
 let dragging = false;
@@ -380,6 +384,68 @@ function setupCameraWindow() {
 
 
 // ==================================================
+// SETTINGS WINDOW
+// ==================================================
+
+function setupSettingsWindow() {
+
+  settingsWindow =
+    document.getElementById("settings-window");
+
+  settingsHeader =
+    document.getElementById("settings-header");
+
+  settingsCollapseButton =
+    document.getElementById("settings-collapse-button");
+
+  if (!settingsWindow || !settingsHeader || !settingsCollapseButton) {
+    return;
+  }
+
+  settingsHeader.addEventListener("mousedown", startDragging);
+
+  settingsCollapseButton.addEventListener("click", function(event) {
+    event.stopPropagation();
+
+    settingsWindow.classList.toggle("collapsed");
+
+    settingsCollapseButton.innerHTML =
+      settingsWindow.classList.contains("collapsed") ? "+" : "—";
+  });
+
+  settingsWindow.querySelectorAll("[data-symmetry]").forEach(function(button) {
+    button.addEventListener("click", function(event) {
+      event.stopPropagation();
+
+      symmetry = Number(button.dataset.symmetry);
+
+      settingsWindow.querySelectorAll("[data-symmetry]").forEach(function(option) {
+        option.classList.toggle(
+          "is-selected",
+          Number(option.dataset.symmetry) === symmetry
+        );
+      });
+    });
+  });
+
+  settingsWindow.querySelectorAll("[data-intensity]").forEach(function(button) {
+    button.addEventListener("click", function(event) {
+      event.stopPropagation();
+
+      applyEngineIntensity(button.dataset.intensity);
+
+      settingsWindow.querySelectorAll("[data-intensity]").forEach(function(option) {
+        option.classList.toggle(
+          "is-selected",
+          option.dataset.intensity === engineIntensity
+        );
+      });
+    });
+  });
+}
+
+
+// ==================================================
 // VOLUME
 // ==================================================
 
@@ -421,7 +487,10 @@ function startDragging(event) {
 
   if (
     event.target === collapseButton ||
-    event.target === controlsCollapseButton
+    event.target === controlsCollapseButton ||
+    event.target === settingsCollapseButton ||
+    event.target.closest("[data-symmetry]") ||
+    event.target.closest("[data-intensity]")
   ) {
     return;
   }
@@ -429,7 +498,9 @@ function startDragging(event) {
   draggingWindow =
     event.currentTarget === cameraHeader
       ? cameraWindow
-      : controlsWindow;
+      : event.currentTarget === controlsHeader
+        ? controlsWindow
+        : settingsWindow;
 
   dragging = true;
 
@@ -571,4 +642,5 @@ setupStartScreen();
 setupTutorialNavigation();
 setupCameraWindow();
 setupControlsWindow();
+setupSettingsWindow();
 setupVolumeControl();
