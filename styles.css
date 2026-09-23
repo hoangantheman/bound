@@ -1,0 +1,934 @@
+:root {
+    --background: #020507;
+    --text: #e9f9ff;
+    --muted: #7d9aa6;
+    --line: rgba(146, 222, 240, 0.28);
+    --accent: #67e0f4;
+    --accent-glow: rgba(103, 224, 244, 0.38);
+}
+
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+
+    background: white;
+}
+
+
+/* -------------------------
+   CAMERA WINDOW
+------------------------- */
+
+#camera-window {
+
+    position: fixed;
+
+    top: clamp(12px, 2vw, 30px);
+    left: clamp(12px, 2vw, 30px);
+
+    width: clamp(230px, 17vw, 320px);
+
+    background: white;
+
+    border: 1px solid black;
+
+    z-index: 100;
+
+    user-select: none;
+}
+
+
+/* -------------------------
+   CAMERA HEADER
+------------------------- */
+
+#camera-header {
+
+    height: clamp(30px, 2.4vw, 38px);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 clamp(7px, 0.7vw, 10px);
+
+    border-bottom: 1px solid black;
+
+    cursor: grab;
+
+    font-family: Arial, sans-serif;
+
+    font-size: clamp(9px, 0.7vw, 12px);
+}
+
+
+/* -------------------------
+   COLLAPSE BUTTON
+------------------------- */
+
+#collapse-button {
+
+    border: none;
+
+    background: none;
+
+    font-size: clamp(15px, 1.2vw, 18px);
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    padding: 0;
+}
+
+
+/* -------------------------
+   CAMERA CONTENT
+------------------------- */
+
+#camera-content {
+
+    width: 100%;
+
+    height: auto;
+    aspect-ratio: 4 / 3;
+
+    overflow: hidden;
+
+    background: black;
+}
+
+
+/* The actual p5 video element */
+
+#camera-content video {
+
+    width: 100% !important;
+
+    height: 100% !important;
+
+    object-fit: cover;
+}
+
+
+/* Collapsed state */
+
+#camera-window.collapsed #camera-content {
+
+    display: none;
+}
+
+
+/* -------------------------
+   VOLUME CONTROL
+------------------------- */
+
+#volume-control {
+
+    position: fixed;
+
+    right: clamp(12px, 2vw, 30px);
+    bottom: clamp(12px, 2vw, 30px);
+
+    display: flex;
+    align-items: center;
+    gap: clamp(6px, 0.7vw, 10px);
+
+    padding: clamp(7px, 0.7vw, 10px) clamp(8px, 0.8vw, 12px);
+
+    border: 1px solid black;
+
+    background: white;
+    color: black;
+
+    font-family: Arial, sans-serif;
+    font-size: clamp(8px, 0.65vw, 11px);
+    letter-spacing: 0.12em;
+    user-select: none;
+    z-index: 100;
+}
+
+
+#start-screen:not(.is-hidden) ~ #camera-window,
+#start-screen:not(.is-hidden) ~ #volume-control,
+#start-screen:not(.is-hidden) ~ #controls-window {
+
+    visibility: hidden;
+}
+
+
+#music-volume {
+
+    width: clamp(85px, 7vw, 125px);
+    accent-color: black;
+    cursor: pointer;
+}
+
+
+/* -------------------------
+   START SCREEN
+------------------------- */
+
+#start-screen {
+
+    position: fixed;
+    inset: 0;
+
+    display: grid;
+    place-items: center;
+
+    background: transparent;
+    color: var(--text);
+
+    cursor: pointer;
+    z-index: 200;
+
+    transition: opacity 900ms ease;
+}
+
+
+#start-screen-content {
+
+    justify-self: start;
+    margin-left: clamp(24px, 8vw, 140px);
+    text-align: left;
+    transform: translateY(1.4rem);
+
+    transition:
+        opacity 700ms ease,
+        transform 700ms ease;
+}
+
+
+#start-screen h1 {
+
+    margin: 0;
+
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(4.5rem, 13vw, 12rem);
+    font-weight: 400;
+    line-height: 0.8;
+    text-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.95),
+        0 10px 72px rgba(0, 0, 0, 0.68);
+}
+
+
+#start-screen p {
+
+    margin: clamp(1.25rem, 2vw, 2rem) 0 0;
+
+    color: var(--muted);
+
+    font-family: Arial, sans-serif;
+    font-size: clamp(0.58rem, 0.65vw, 0.68rem);
+    letter-spacing: 0.38em;
+    text-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.95),
+        0 4px 42px rgba(0, 0, 0, 0.7);
+}
+
+
+#start-screen.is-hidden {
+
+    opacity: 0;
+    pointer-events: none;
+}
+
+
+#start-screen.is-hidden #start-screen-content {
+
+    opacity: 0;
+    transform: translateY(-12px);
+}
+
+
+@media (max-width: 600px) {
+
+    #volume-control {
+
+        right: 15px;
+        bottom: 15px;
+    }
+
+}
+
+
+/* -------------------------
+   HOME PAGE
+------------------------- */
+
+.home-page {
+
+    min-height: 100vh;
+
+    display: grid;
+
+    place-items: center;
+
+    overflow: hidden;
+
+    background: var(--background);
+    color: var(--text);
+
+    font-family: Georgia, 'Times New Roman', serif;
+}
+
+
+.home-page main {
+
+    position: relative;
+
+    width: min(88vw, 920px);
+    min-height: 70vh;
+
+    display: grid;
+
+    place-items: center;
+
+    isolation: isolate;
+}
+
+
+.home-page main::before,
+.home-page main::after {
+
+    content: '';
+
+    position: absolute;
+
+    inset: 8% 12%;
+
+    border: 1px solid var(--line);
+    border-radius: 50%;
+
+    transform: rotate(-18deg) scaleY(0.58);
+
+    pointer-events: none;
+    z-index: -1;
+}
+
+
+.home-page main::after {
+
+    inset: 18% 4%;
+
+    opacity: 0.45;
+
+    transform: rotate(22deg) scaleY(0.42);
+}
+
+
+.home-page .content {
+
+    text-align: center;
+
+    animation: home-arrive 1.2s ease both;
+}
+
+
+.home-page h1 {
+
+    margin: 0;
+
+    font-size: clamp(5rem, 17vw, 12rem);
+    font-weight: 400;
+    line-height: 0.8;
+    letter-spacing: 0.02em;
+}
+
+
+.home-page p {
+
+    margin: clamp(1.25rem, 2vw, 2rem) 0 clamp(1.75rem, 2.5vw, 2.5rem);
+
+    color: var(--muted);
+
+    font-family: Arial, sans-serif;
+    font-size: clamp(0.58rem, 0.65vw, 0.68rem);
+    letter-spacing: 0.38em;
+    text-transform: uppercase;
+}
+
+
+.home-page button {
+
+    padding: clamp(0.75rem, 1vw, 1rem) clamp(1.75rem, 2.4vw, 2.4rem);
+
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+
+    background: transparent;
+    color: var(--text);
+
+    font: inherit;
+    font-size: clamp(0.78rem, 0.9vw, 0.95rem);
+    letter-spacing: 0.16em;
+
+    cursor: pointer;
+
+    transition:
+        background 220ms ease,
+        color 220ms ease,
+        box-shadow 220ms ease;
+}
+
+
+.home-page button:hover,
+.home-page button:focus-visible {
+
+    background: var(--accent);
+    color: var(--background);
+
+    box-shadow: 0 0 34px var(--accent-glow);
+
+    outline: none;
+}
+
+
+@keyframes home-arrive {
+
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* -------------------------
+   TUTORIAL
+------------------------- */
+
+#tutorial {
+
+    position: fixed;
+    inset: 0;
+
+    display: grid;
+    place-items: center;
+
+    padding: clamp(14px, 2.5vw, 24px);
+
+    background: rgba(0, 0, 0, 0.82);
+
+    z-index: 300;
+
+    opacity: 0;
+    pointer-events: none;
+
+    transition: opacity 300ms ease;
+}
+
+
+#tutorial.is-visible {
+
+    opacity: 1;
+    pointer-events: auto;
+}
+
+
+#tutorial-card {
+
+    width: min(900px, 84vw);
+    min-height: min(620px, 76vh);
+
+    display: flex;
+    flex-direction: column;
+
+    background: white;
+    color: black;
+
+    border: 1px solid black;
+
+    transform: translateY(10px);
+    transition: transform 300ms ease;
+}
+
+
+#tutorial.is-visible #tutorial-card {
+
+    transform: translateY(0);
+}
+
+
+
+
+#tutorial-content {
+
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    padding: clamp(30px, 4.5vw, 72px);
+}
+
+
+#tutorial-content h2 {
+
+    margin: 0;
+
+    color: black;
+
+    font-family: Arial, sans-serif;
+    font-size: clamp(2rem, 4.5vw, 5rem);
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+}
+
+
+#tutorial-content > p {
+
+    max-width: 650px;
+
+    margin: clamp(18px, 2.4vw, 28px) 0 0;
+
+    color: black;
+
+    font-family: Arial, sans-serif;
+    font-size: clamp(0.85rem, 1.15vw, 1.1rem);
+    line-height: 1.6;
+}
+
+
+.tutorial-choice {
+
+    display: flex;
+    gap: clamp(6px, 0.7vw, 8px);
+
+    margin-top: clamp(20px, 2.5vw, 30px);
+}
+
+
+.tutorial-choice button,
+#tutorial-next,
+#tutorial-back {
+
+    border: 1px solid black;
+
+    background: white;
+    color: black;
+
+    padding: clamp(8px, 0.8vw, 10px) clamp(10px, 1.1vw, 14px);
+
+    font-family: Arial, sans-serif;
+    font-size: clamp(0.62rem, 0.7vw, 0.75rem);
+    letter-spacing: 0.08em;
+
+    cursor: pointer;
+
+    transition:
+        background 120ms ease,
+        color 120ms ease;
+}
+
+
+.tutorial-choice button:hover,
+.tutorial-choice button.is-selected,
+#tutorial-next:hover,
+#tutorial-back:hover {
+
+    background: black;
+    color: white;
+}
+
+
+.tutorial-choice button {
+
+    min-width: clamp(108px, 9vw, 130px);
+}
+
+
+.tutorial-controls {
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+
+    margin-top: clamp(22px, 2.8vw, 34px);
+
+    border: 1px solid black;
+}
+
+
+.tutorial-control {
+
+    min-height: clamp(170px, 18vw, 210px);
+
+    padding: clamp(16px, 2vw, 24px);
+
+    background: white;
+}
+
+
+.tutorial-control + .tutorial-control {
+
+    border-left: 1px solid black;
+}
+
+
+.tutorial-control h3 {
+
+    margin: 0 0 clamp(15px, 1.8vw, 22px);
+
+    color: black;
+
+    font-family: Arial, sans-serif;
+    font-size: clamp(0.62rem, 0.7vw, 0.6875rem);
+    font-weight: 400;
+    letter-spacing: 0.08em;
+}
+
+
+.tutorial-control p {
+
+    margin: 0 0 clamp(12px, 1.5vw, 18px);
+
+    color: black;
+
+    font-family: Arial, sans-serif;
+    font-size: clamp(0.7rem, 0.78vw, 0.82rem);
+    line-height: 1.55;
+}
+
+
+#tutorial-footer {
+
+    display: grid;
+    grid-template-columns: clamp(54px, 6vw, 80px) 1fr clamp(54px, 6vw, 80px);
+    align-items: center;
+
+    min-height: clamp(44px, 4.5vw, 54px);
+
+    padding: clamp(5px, 0.6vw, 7px) clamp(7px, 0.8vw, 10px);
+
+    border-top: 1px solid black;
+}
+
+
+#tutorial-back,
+#tutorial-next {
+
+    width: clamp(26px, 2.5vw, 30px);
+    height: clamp(26px, 2.5vw, 30px);
+
+    padding: 0;
+
+    font-family: Arial, sans-serif;
+    font-size: clamp(14px, 1.3vw, 16px);
+    line-height: 1;
+}
+
+
+#tutorial-back {
+
+    justify-self: start;
+}
+
+
+#tutorial-next {
+
+    justify-self: end;
+}
+
+
+#tutorial-back:disabled {
+
+    opacity: 0.25;
+    cursor: default;
+}
+
+
+#tutorial-back:disabled:hover {
+
+    background: white;
+    color: black;
+}
+
+
+#tutorial-progress {
+
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+}
+
+
+.tutorial-dot {
+
+    width: 5px;
+    height: 5px;
+
+    border: 1px solid black;
+}
+
+
+.tutorial-dot.is-active {
+
+    background: black;
+}
+
+
+
+/* -------------------------
+   CONTROLS WINDOW
+------------------------- */
+
+/* Tutorial camera note */
+
+.tutorial-camera-note {
+
+    margin: clamp(12px, 1.5vw, 18px) 0 0;
+
+    color: black;
+    font-family: Arial, sans-serif;
+    font-size: clamp(0.7rem, 0.78vw, 0.82rem);
+    line-height: 1.55;
+}
+
+
+/* Controls camera note */
+
+.controls-camera-note {
+
+    grid-column: 1 / -1;
+
+    margin: 0;
+    padding: clamp(9px, 1vw, 12px) clamp(11px, 1.3vw, 16px) clamp(11px, 1.3vw, 16px);
+
+    border-top: 1px solid black;
+
+    font-family: Arial, sans-serif;
+    font-size: clamp(0.6rem, 0.67vw, 0.7rem);
+    line-height: 1.45;
+}
+
+
+#controls-window {
+
+    position: fixed;
+
+    left: clamp(12px, 2vw, 30px);
+    bottom: clamp(12px, 2vw, 30px);
+
+    width: min(400px, 36vw);
+    height: fit-content;
+
+    background: white;
+    color: black;
+
+    border: 1px solid black;
+
+    z-index: 100;
+
+    user-select: none;
+}
+
+
+#controls-header {
+
+    height: clamp(30px, 2.4vw, 38px);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 clamp(7px, 0.7vw, 10px);
+
+    border-bottom: 1px solid black;
+
+    cursor: grab;
+
+    font-family: Arial, sans-serif;
+    font-size: clamp(9px, 0.7vw, 12px);
+}
+
+
+#controls-collapse-button {
+
+    border: none;
+    background: none;
+
+    font-size: clamp(15px, 1.2vw, 18px);
+    line-height: 1;
+
+    cursor: pointer;
+    padding: 0;
+}
+
+
+#controls-content {
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+
+.controls-section {
+
+    padding: clamp(11px, 1.3vw, 16px);
+
+    background: white;
+}
+
+
+.controls-section + .controls-section {
+
+    border-left: 1px solid black;
+}
+
+
+.controls-section h3 {
+
+    margin: 0 0 clamp(10px, 1.1vw, 14px);
+
+    font-family: Arial, sans-serif;
+    font-size: clamp(0.62rem, 0.68vw, 0.75rem);
+    font-weight: 400;
+    letter-spacing: 0.08em;
+}
+
+
+.controls-section p {
+
+    margin: 0 0 clamp(8px, 1vw, 12px);
+
+    font-family: Arial, sans-serif;
+    font-size: clamp(0.68rem, 0.74vw, 0.82rem);
+    line-height: 1.45;
+}
+
+
+.controls-section p:last-child {
+
+    margin-bottom: 0;
+}
+
+
+#controls-window.collapsed {
+
+    height: clamp(30px, 2.5vw, 40px);
+}
+
+
+#controls-window.collapsed #controls-header {
+
+    border-bottom: none;
+}
+
+
+#controls-window.collapsed #controls-content {
+
+    display: none;
+}
+
+
+#tutorial-next:disabled {
+
+    opacity: 0.25;
+    cursor: default;
+}
+
+
+#tutorial-next:disabled:hover {
+
+    background: white;
+    color: black;
+}
+
+/* -------------------------
+   MEDIA QUERIES - FOR DESKTOPS
+------------------------- */
+
+@media (max-width: 700px) {
+
+    #tutorial-card {
+        min-height: 82vh;
+    }
+
+    #tutorial-content {
+        padding: 30px;
+    }
+
+    #tutorial-content h2 {
+        font-size: clamp(2.8rem, 12vw, 5rem);
+    }
+
+    .tutorial-controls {
+        grid-template-columns: 1fr;
+    }
+
+    .tutorial-control {
+        min-height: auto;
+        padding: 18px;
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    #controls-window {
+        width: min(340px, calc(100vw - 24px));
+    }
+
+    #controls-content {
+        grid-template-columns: 1fr;
+    }
+
+    .controls-section + .controls-section {
+        border-left: none;
+        border-top: 1px solid black;
+    }
+
+}
+
+
+@media (min-width: 1600px) {
+
+    #camera-window {
+        width: clamp(320px, 18vw, 340px);
+    }
+
+    #start-screen h1 {
+        font-size: clamp(12rem, 12vw, 14rem);
+    }
+
+    #tutorial-card {
+        width: min(51vw, 980px);
+        min-height: min(63vh, 680px);
+    }
+
+    #tutorial-content {
+        padding: clamp(72px, 4.5vw, 84px);
+    }
+
+    #tutorial-content h2 {
+        font-size: clamp(5rem, 4.5vw, 5.5rem);
+    }
+
+    #controls-window {
+        width: min(23vw, 440px);
+    }
+
+}
