@@ -132,47 +132,39 @@ body {
 }
 
 
+/* Keep interface windows hidden until the title screen has been exited. */
+#camera-window,
+#settings-window,
+#controls-window {
+
+    visibility: hidden;
+    pointer-events: none;
+}
+
+
+#start-screen.is-hidden ~ #camera-window,
+#start-screen.is-hidden ~ #settings-window,
+#start-screen.is-hidden ~ #controls-window {
+
+    visibility: visible;
+    pointer-events: auto;
+}
+
+
 /* -------------------------
-   VOLUME CONTROL
+   SETTINGS MUSIC SLIDER
 ------------------------- */
 
-#volume-control {
-
-    position: fixed;
-
-    right: clamp(12px, 2vw, 30px);
-    bottom: clamp(12px, 2vw, 30px);
+.settings-volume {
 
     display: flex;
     align-items: center;
-    gap: clamp(6px, 0.7vw, 10px);
-
-    padding: clamp(7px, 0.7vw, 10px) clamp(8px, 0.8vw, 12px);
-
-    border: 1px solid black;
-
-    background: white;
-    color: black;
-
-    font-family: Arial, sans-serif;
-    font-size: clamp(8px, 0.65vw, 11px);
-    letter-spacing: 0.12em;
-    user-select: none;
-    z-index: 100;
+    width: 100%;
 }
-
-
-#start-screen:not(.is-hidden) ~ #camera-window,
-#start-screen:not(.is-hidden) ~ #volume-control,
-#start-screen:not(.is-hidden) ~ #controls-window {
-
-    visibility: hidden;
-}
-
 
 #music-volume {
 
-    width: clamp(85px, 7vw, 125px);
+    width: 100%;
     accent-color: black;
     cursor: pointer;
 }
@@ -255,17 +247,6 @@ body {
     opacity: 0;
     animation: none;
     transform: translateY(-12px);
-}
-
-
-@media (max-width: 600px) {
-
-    #volume-control {
-
-        right: 15px;
-        bottom: 15px;
-    }
-
 }
 
 
@@ -731,6 +712,141 @@ body {
 }
 
 
+/* -------------------------
+   SETTINGS WINDOW
+------------------------- */
+
+#settings-window {
+
+    position: fixed;
+
+    top: clamp(12px, 2vw, 30px);
+    right: clamp(12px, 2vw, 30px);
+
+    width: min(330px, 28vw);
+
+    background: white;
+    color: black;
+
+    border: 1px solid black;
+
+    z-index: 100;
+
+    user-select: none;
+}
+
+
+#settings-header {
+
+    height: clamp(30px, 2.4vw, 38px);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 clamp(7px, 0.7vw, 10px);
+
+    border-bottom: 1px solid black;
+
+    cursor: grab;
+
+    font-family: Arial, sans-serif;
+    font-size: clamp(9px, 0.7vw, 12px);
+}
+
+
+#settings-collapse-button {
+
+    border: none;
+    background: none;
+
+    font-size: clamp(15px, 1.2vw, 18px);
+    line-height: 1;
+
+    cursor: pointer;
+    padding: 0;
+}
+
+
+#settings-content {
+
+    padding: clamp(11px, 1.1vw, 15px);
+}
+
+
+.settings-group + .settings-group {
+
+    margin-top: clamp(14px, 1.4vw, 18px);
+}
+
+
+.settings-label {
+
+    display: block;
+
+    margin-bottom: clamp(8px, 0.8vw, 10px);
+
+    font-family: Arial, sans-serif;
+    font-size: clamp(0.62rem, 0.68vw, 0.75rem);
+    letter-spacing: 0.08em;
+}
+
+
+.settings-options {
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(6px, 0.6vw, 8px);
+}
+
+
+.settings-options button {
+
+    border: 1px solid black;
+
+    background: white;
+    color: black;
+
+    padding: clamp(8px, 0.8vw, 10px) clamp(10px, 1vw, 13px);
+
+    font-family: Arial, sans-serif;
+    font-size: clamp(0.62rem, 0.7vw, 0.75rem);
+    letter-spacing: 0.08em;
+
+    cursor: pointer;
+
+    transition:
+        background 120ms ease,
+        color 120ms ease;
+}
+
+
+.settings-options button:hover,
+.settings-options button.is-selected {
+
+    background: black;
+    color: white;
+}
+
+
+#settings-window.collapsed {
+
+    height: clamp(30px, 2.5vw, 40px);
+}
+
+
+#settings-window.collapsed #settings-header {
+
+    border-bottom: none;
+}
+
+
+#settings-window.collapsed #settings-content {
+
+    display: none;
+}
+
+
 /* Controls camera note */
 
 .controls-camera-note {
@@ -752,7 +868,7 @@ body {
 
     position: fixed;
 
-    left: clamp(12px, 2vw, 30px);
+    right: clamp(12px, 2vw, 30px);
     bottom: clamp(12px, 2vw, 30px);
 
     width: min(400px, 36vw);
@@ -885,6 +1001,10 @@ body {
 
     #controls-window {
         width: min(340px, calc(100vw - 24px));
+    }
+
+    #settings-window {
+        width: min(300px, calc(100vw - 24px));
     }
 
     #controls-content {
